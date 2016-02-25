@@ -13,35 +13,37 @@ static const CGFloat botHight = 0.074074074;
 static const CGFloat botWidth = 0.1212121212;
 static const CGFloat wallWidth = 0.36363636;
 static const CGFloat wallHeight = 0.18181818;
+//static const CGFloat fDestinationWidth = 0.272727;
 
 @interface ViewController ()
 
+@property (nonatomic, retain) NSTimer* wait;
+@property (assign, nonatomic) NSInteger count;
+@property (nonatomic, retain) NSTimer* botLvlSixTimer;
+@property (assign, nonatomic) BOOL newComets;
+@property (nonatomic, retain) NSTimer* sixtySeconds;
 @property (assign, nonatomic) NSInteger level;
 @property (assign, nonatomic) BOOL playerDestruction;
 @property (assign, nonatomic) NSInteger curse;
 @property (nonatomic, retain) NSTimer* timerBot;
 @property (nonatomic, retain) NSTimer* playerTimer;
 @property (assign, nonatomic) BOOL touchStart;
-@property(assign, nonatomic) BOOL monetkaTaken;
-@property (strong, nonatomic) UIImageView* monetka;
 @property (strong, nonatomic) UIView* monetkaView;
 @property (strong, nonatomic) UIImageView* botView;
 @property (strong, nonatomic) UIImageView* playerView;
 @property (strong, nonatomic) UIImageView* movingView;
-
 @property (assign, nonatomic) CGPoint touchCenterDifferance;
 @property (assign, nonatomic) BOOL leftBotFlag;
 @property (assign, nonatomic) CGRect* rect;
 @property (strong, nonatomic) UIImageView* wallView;
 @property (assign, nonatomic) CGPoint touchBeganPoint;
-
 @property (strong, nonatomic) UIView* startView;
 @property (strong, nonatomic) UIView* endView;
-
 @property (strong, nonatomic) NSArray* bum;
-
 @property (strong, nonatomic) NSArray* levels;
 @property (strong, nonatomic) UILabel* labelNewLevel;
+@property (strong, nonatomic) UIImageView* monetka;
+@property (assign, nonatomic) BOOL monetkaTaken;
 
 @end
 
@@ -49,16 +51,14 @@ static const CGFloat wallHeight = 0.18181818;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.level = 0;
+    self.level = 4;
     self.monetkaTaken = NO;
-    
+    self.newComets = YES;
+    self.count = 0;
     
     UIImageView* space = [[UIImageView alloc] initWithFrame:self.view.frame];
     [self.view addSubview:space];
     space.image = [UIImage imageNamed:@"space.png"];
-    
-    self.botView = [[UIImageView alloc] initWithFrame:self.view.frame];
-    [self.view addSubview: self.botView];
     
     self.startView = [[UIView alloc] initWithFrame:CGRectMake(-5, 0, 6, CGRectGetHeight(self.view.frame))];
     [self.view addSubview:self.startView];
@@ -66,18 +66,28 @@ static const CGFloat wallHeight = 0.18181818;
     self.endView = [[UIView alloc] initWithFrame:CGRectMake(CGRectGetWidth(self.view.frame) - 1, 0, 6, CGRectGetHeight(self.view.frame))];
     [self.view addSubview:self.endView];
     
+    
     self.monetka = [[UIImageView alloc] initWithFrame:CGRectMake(arc4random() % (int)(self.view.frame.size.width - 60) + 30, arc4random() % (int)(self.view.frame.size.height - self.view.frame.size.height * 2 * wallHeight) + self.view.frame.size.height * wallHeight, 30, 40)];
     
     self.monetka.image = [UIImage imageNamed:@"alien on planet vector.png"];
     [self.view addSubview:self.monetka];
     
+    [UIView animateWithDuration:10
+                          delay:0
+                        options:UIViewAnimationOptionAutoreverse | UIViewAnimationOptionRepeat |UIViewAnimationOptionCurveLinear
+                     animations:^{
+                         self.monetka.transform = CGAffineTransformMakeRotation(3.14);
+                     } completion:^(BOOL finished) {
+                     }];
+    self.botView = [[UIImageView alloc] initWithFrame:self.view.frame];
+    [self.view addSubview: self.botView];
     UILabel* labelNewLevel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 50)];
     labelNewLevel.center = CGPointMake(self.view.frame.size.width / 2, self.view.frame.size.height / 2);
     labelNewLevel.textAlignment = NSTextAlignmentCenter;
     labelNewLevel.textColor = [UIColor whiteColor];
     labelNewLevel.font = [UIFont fontWithName:@"Arial Rounded MT Bold" size:(36.0)];
     [self.view addSubview:labelNewLevel];
-    labelNewLevel.text = [NSString stringWithFormat: @"Level %ld", (long)self.level];
+    labelNewLevel.text = [NSString stringWithFormat: @"Уровень %ld", (long)self.level];
     labelNewLevel.alpha = 0;
     self.labelNewLevel = labelNewLevel;
     
@@ -89,26 +99,31 @@ static const CGFloat wallHeight = 0.18181818;
 #pragma mark - start - restart - stop - pause
 
 - (void) start {
-    if (self.level < 6) {
-        [self boomInitialisation];
-        [self botInitialisation];
-        [self playerInitiaisation];
-        [self animationNewLevel];
-        [self animateToBotStart];
-        [self monetkaLocation];
-        self.monetka.alpha = 1;
-        [self restart];
-    } else {
+    [self boomInitialisation];
+    [self botInitialisation];
+    [self playerInitiaisation];
+    [self animationNewLevel];
+    [self animateToBotStart];
     
-    }
+    
+    [self restart];
 }
 
 - (void)startTimerBot {
-    self.timerBot = [NSTimer scheduledTimerWithTimeInterval:1.f/60
-                                                     target:self
-                                                   selector:@selector(animate)
-                                                   userInfo:NULL
-                                                    repeats:YES];
+    if (self.level < 5) {
+        self.timerBot = [NSTimer scheduledTimerWithTimeInterval:1.f/60
+                                                         target:self
+                                                       selector:@selector(animate)
+                                                       userInfo:NULL
+                                                        repeats:YES];
+
+    } else {
+        self.timerBot = [NSTimer scheduledTimerWithTimeInterval:1.f/20
+                                                         target:self
+                                                       selector:@selector(botGoesDown)
+                                                       userInfo:NULL
+                                                        repeats:YES];
+    }
 }
 
 - (void) restart {
@@ -116,31 +131,55 @@ static const CGFloat wallHeight = 0.18181818;
     [self animateToPlayerStart];
     self.playerDestruction = YES;
     self.view.userInteractionEnabled = YES;
+    self.monetkaTaken = NO;
+    self.monetka.alpha = 100;
+}
+- (void) restartLevelSix {
+    self.playerDestruction = YES;
+    self.view.userInteractionEnabled = YES;
+    self.monetkaTaken = NO;
+    self.monetka.alpha = 0;
+    self.playerView.alpha = 1.f;
     
+    [self playerLvlSixStart];
+}
+
+- (void) startLevelSix {
+    [self startTimerBot];
+    [self restartLevelSix];
+    [self botInitPartTwo];
 }
 
 - (void) stop {
-
+    [self.timerBot invalidate];
+    [self.sixtySeconds invalidate];
+  //  [self removeBot];
 }
+
+//- (void)removeBot {
+//    [self.botView removeFromSuperview];
+//}
 
 - (void)stopBoomAnimation {
     [self.playerView stopAnimating];
-    [self restart];
+    if (self.level < 5) {
+        [self restart];
+    } else {
+        [self restartLevelSix];
+    }
+    
 }
 
 - (void) pause {
     
 }
-#pragma mark - LevelSixProject
 
-//- (void) initBot {
-//}
 #pragma mark - initialisation
-
 - (void) monetkaLocation {
     self.monetka.center = CGPointMake(arc4random() % (int)(self.view.frame.size.width - 60) + 30,
                                       arc4random() % (int)(self.view.frame.size.height - self.view.frame.size.height * 2 * wallHeight) + self.view.frame.size.height * wallHeight);
 }
+
 - (void) botInitialisation {
     for (int hight = 0; hight <= 4; hight++) {
         if (!(hight % 2)) {
@@ -164,6 +203,49 @@ static const CGFloat wallHeight = 0.18181818;
             bot.leftSide = NO;
             [bot startAnimating];
         }
+    }
+}
+
+- (void)playerInitPartTwo {
+    self.playerView.center = CGPointMake(self.view.frame.size.width / 2, self.view.frame.size.height * 0.75);
+}
+
+- (void)botInitPartTwo {
+    for (Bot*bot in self.botView.subviews) {
+        bot.center = CGPointMake(arc4random() % ((int)self.view.frame.size.width - 40) + 20, -(arc4random() % 300 - 100));
+    }
+    
+//    while (self.count != 25) {
+//        [self startTimerBot];
+//    }
+}
+
+- (void)time {
+    self.sixtySeconds = [NSTimer scheduledTimerWithTimeInterval:15/10.f
+                                                         target:self
+                                                       selector:@selector(botGoesDown)
+                                                       userInfo:NULL
+                                                        repeats:NO];
+}
+
+- (void)waitNextWave {
+    self.wait = [NSTimer scheduledTimerWithTimeInterval:3.f
+                                                 target:self
+                                               selector:@selector(botGoesDown)
+                                               userInfo:NULL
+                                                repeats:NO];
+
+}
+
+- (void)playerLvlSixStart {
+    self.playerView.center = CGPointMake(self.view.frame.size.width / 4, self.view.frame.size.height * 0.6);
+    self.playerView.alpha = 1.f;
+    
+}
+
+- (void)botLvlSixStart {
+    for (Bot* bot in self.botView.subviews) {
+        bot.center = CGPointMake(arc4random() % ((int)self.view.frame.size.width - 40) + 20, -arc4random() % 300);
     }
 }
 
@@ -235,9 +317,9 @@ static const CGFloat wallHeight = 0.18181818;
 - (void) levelArrays {
     NSArray* level1 =  @[@3, @3, @5, @3, @3];
     NSArray* level2 =  @[@3, @5, @5, @5, @3];
-    NSArray* level3 =  @[@5, @3, @5, @3, @5];
+    NSArray* level3 =  @[@6, @5, @5, @5, @6];
     NSArray* level4 =  @[@4, @4, @5, @4, @4];
-    NSArray* level5 =  @[@4, @5, @5, @5, @4];
+    NSArray* level5 =  @[@1, @1, @1, @1, @1];
 
    self.levels = @[level1, level2, level3, level4, level5];
 }
@@ -276,6 +358,7 @@ static const CGFloat wallHeight = 0.18181818;
         if (bot.leftSide == YES) {
                 self.curse = self.curse * (-1);
         }
+        [self rotation:bot];
         bot.center = (CGPointMake(bot.center.x + self.curse, bot.center.y));
         
         if (self.playerDestruction == YES) {
@@ -284,31 +367,64 @@ static const CGFloat wallHeight = 0.18181818;
     }
 }
 
+- (void) botGoesDown {
+    
+    for (Bot* bot in self.botView.subviews) {
+//        if (bot == [self.botView.subviews objectAtIndex: 2]) {
+//            self.count++;
+//            [self time];
+//        }
+        if (bot.center.y > self.view.frame.size.height + 40) {
+            bot.center = CGPointMake(arc4random() % ((int)self.view.frame.size.width - 40) + 20, -(arc4random() % 300 - 100));
+//            if (bot == [self.botView.subviews objectAtIndex: 2]) {
+//                self.count++;
+//                [self time];
+//            }
+            self.count++;
+            [self time];
+        } else {
+            bot.center = CGPointMake(bot.center.x, bot.center.y + 6);
+        }
+        [self intersection:bot];
+    }
+}
+
+- (void) rotation: (Bot*) bot {
+    [UIView animateWithDuration:1
+                          delay:0
+                        options:UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         CGAffineTransformRotate(self.botView.transform, 360);
+                         //self.botView.transform = CGAffineTransformMakeRotation(360);
+                     } completion:^(BOOL finished) {
+                     }];
+}
+
 - (void) intersection: (Bot*) bot {
     if (CGRectIntersectsRect(self.playerView.frame, bot.frame)) {
-        
         self.view.userInteractionEnabled = NO;
         [self.timerBot invalidate];
-        [self animateToBotStart];
-        
+        if (self.level < 5) {
+            [self animateToBotStart];
+        } else {
+            [self restartLevelSix];
+        }
         self.playerView.animationImages = self.bum;
         self.playerView.animationDuration = 0.7;
         [self.playerView startAnimating];
-        
         self.playerDestruction = NO;
         self.touchStart = NO;
-        
         [NSTimer scheduledTimerWithTimeInterval:0.7
                                          target:self
                                        selector:@selector(stopBoomAnimation)
                                        userInfo:NULL
                                         repeats:NO];
-        if (CGRectIntersectsRect(self.playerView.frame, self.monetka.frame)) {
-            self.monetka.alpha = 0;
-            self.monetkaTaken = YES;
-            
-        }
-
+        
+    }
+    if (CGRectIntersectsRect(self.playerView.frame, self.monetka.frame)) {
+        self.monetka.alpha = 0;
+        self.monetkaTaken = YES;
+        
     }
 }
 
@@ -316,14 +432,11 @@ static const CGFloat wallHeight = 0.18181818;
     if (self.touchStart == YES) {
         self.playerView.center = CGPointMake(point.x, point.y);
         if (self.playerView.center.x < self.view.frame.size.width * botWidth) {
-            
             self.playerView.center = CGPointMake(self.playerView.frame.size.width / 2, point.y);
         } else if (self.playerView.center.x > (self.view.frame.size.width - self.playerView.frame.size.width / 2)) {
-            
             self.playerView.center = CGPointMake(self.view.frame.size.width - self.playerView.frame.size.width / 2, point.y);
         }
         if (self.playerView.frame.origin.y < 0.0001) {
-            
             self.playerView.center = CGPointMake(point.x, 0.0001 + self.playerView.frame.size.height / 2);
         }
     }
@@ -341,7 +454,7 @@ static const CGFloat wallHeight = 0.18181818;
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
-    if (self.touchStart == YES) {
+       if (self.touchStart == YES) {
         UITouch* touch = [touches anyObject];
         CGPoint pointOnMainView = [touch locationInView:self.view];
         CGPoint correction = CGPointMake(pointOnMainView.x + self.touchCenterDifferance.x,
@@ -351,19 +464,25 @@ static const CGFloat wallHeight = 0.18181818;
         if (self.playerView.center.y > self.view.frame.size.height * 0.7 && self.monetkaTaken == YES) {
             self.touchStart = NO;
             [self.timerBot invalidate];
+            
             [self animateToBotStart];
             self.view.userInteractionEnabled = NO;
             [UIView animateWithDuration:1
                                   delay:0
                                 options:UIViewAnimationOptionCurveEaseOut
                              animations:^{
-                                 self.playerView.center = CGPointMake(self.view.center.x, self.view.frame.size.height + 50);
+                                 self.playerView.center = CGPointMake(self.view.center.x, self.view.frame.size.height);
                              } completion:^(BOOL finished) {
-                                 
-                                 self.monetkaTaken = NO;
                                  self.level++;
-                                 [self animationNewLevel];
-                                 [self restart];
+                                 [self monetkaLocation];
+                                 if (self.level > 4) {
+                                     [self stop];
+                                     [self startLevelSix];
+
+                                 } else {
+                                     [self animationNewLevel];
+                                     [self restart];
+                                 }
                              }];
 
         }

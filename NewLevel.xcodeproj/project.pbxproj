@@ -34,7 +34,7 @@
 		567FAB8E1B84E67500BDEAC3 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 567FAB8C1B84E67500BDEAC3 /* LaunchScreen.xib */; };
 		567FAB9A1B84E67600BDEAC3 /* NewLevelTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 567FAB991B84E67600BDEAC3 /* NewLevelTests.m */; };
 		568DBA8E1BA1F37C00A84698 /* Bot.m in Sources */ = {isa = PBXBuildFile; fileRef = 568DBA8D1BA1F37C00A84698 /* Bot.m */; };
-		56B96BD01C610E370077F8B5 /* alien on planet vector.png in Resources */ = {isa = PBXBuildFile; fileRef = 56B96BCF1C610E370077F8B5 /* alien on planet vector.png */; settings = {ASSET_TAGS = (); }; };
+		56B7AB9C1C341B2E003FDAF0 /* alien on planet vector.png in Resources */ = {isa = PBXBuildFile; fileRef = 56B7AB9B1C341B2E003FDAF0 /* alien on planet vector.png */; settings = {ASSET_TAGS = (); }; };
 		56D50F671BE910C100A58569 /* space.png in Resources */ = {isa = PBXBuildFile; fileRef = 56D50F661BE910C100A58569 /* space.png */; settings = {ASSET_TAGS = (); }; };
 		56D50F691BE9129D00A58569 /* bobTheAlien.png in Resources */ = {isa = PBXBuildFile; fileRef = 56D50F681BE9129D00A58569 /* bobTheAlien.png */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
@@ -84,7 +84,7 @@
 		567FAB991B84E67600BDEAC3 /* NewLevelTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewLevelTests.m; sourceTree = "<group>"; };
 		568DBA8C1BA1F37C00A84698 /* Bot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Bot.h; sourceTree = "<group>"; };
 		568DBA8D1BA1F37C00A84698 /* Bot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Bot.m; sourceTree = "<group>"; };
-		56B96BCF1C610E370077F8B5 /* alien on planet vector.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "alien on planet vector.png"; sourceTree = "<group>"; };
+		56B7AB9B1C341B2E003FDAF0 /* alien on planet vector.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "alien on planet vector.png"; sourceTree = "<group>"; };
 		56D50F661BE910C100A58569 /* space.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = space.png; sourceTree = "<group>"; };
 		56D50F681BE9129D00A58569 /* bobTheAlien.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bobTheAlien.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -158,8 +158,8 @@
 				567FAB851B84E67500BDEAC3 /* ViewController.m */,
 				568DBA8C1BA1F37C00A84698 /* Bot.h */,
 				568DBA8D1BA1F37C00A84698 /* Bot.m */,
-				56B96BCF1C610E370077F8B5 /* alien on planet vector.png */,
 				56D50F681BE9129D00A58569 /* bobTheAlien.png */,
+				56B7AB9B1C341B2E003FDAF0 /* alien on planet vector.png */,
 				56D50F661BE910C100A58569 /* space.png */,
 				563FB1D21BEB9E8F00A761B6 /* комета png.png */,
 				564C12141BAB30770017EB97 /* monetka.png */,
@@ -300,7 +300,7 @@
 				56D50F691BE9129D00A58569 /* bobTheAlien.png in Resources */,
 				56551C9D1BFE412400162A46 /* bang11.png in Resources */,
 				56551CA31BFE412400162A46 /* bang17.png in Resources */,
-				56B96BD01C610E370077F8B5 /* alien on planet vector.png in Resources */,
+				56B7AB9C1C341B2E003FDAF0 /* alien on planet vector.png in Resources */,
 				56551CAB1BFE412400162A46 /* bang9.png in Resources */,
 				56551CA11BFE412400162A46 /* bang15.png in Resources */,
 				56551CA21BFE412400162A46 /* bang16.png in Resources */,
